@@ -1,4 +1,5 @@
-##FullStack Implementation
+#Full-Stack Authentication & Dashboard Application
+===================================================
 
 A full-stack web app showcasing a real-world user flow from landing page to authenticated dashboard.
 Includes secure sign-up and sign-in with backend validation and database persistence.
