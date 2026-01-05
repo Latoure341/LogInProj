@@ -21,7 +21,7 @@ app.get('/', (req, res)=>{
     res.status(200).send('../frontend/index.html');
 })
 
-mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://tukamothupi_db_user:Eric232221@thedeveloper.bkgwozo.mongodb.net/BackendDB?retryWrites=true&w=majority')
+mongoose.connect(process.env.MONGO_URI)
   .then(() => {
         console.log('The database is connected!');
         app.listen(port, ()=>{
