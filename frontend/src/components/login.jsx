@@ -7,7 +7,7 @@ function Login(){
     const handleSubmit = (e) => {
         e.preventDefault()
         // TODO: perform auth here
-        navigate('/')
+        navigate('/dashboard')
     }
 
     return(

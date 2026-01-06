@@ -11,7 +11,7 @@ function Signup(){
 		setForm(prev => ({ ...prev, [id]: value }))
 	}
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault()
 		setError('')
 		if (!form.name || !form.email || !form.password || !form.confirm) {
@@ -23,13 +23,27 @@ function Signup(){
 			return
 		}
 		// TODO: perform signup request here
-		navigate('/')
+		const response = await fetch("http://localhost:3000/api/auth/signup", {	
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json'},
+			body: JSON.stringify({ name: form.name, email: form.email, password: form.password})
+		})
+		const data = await response.json();
+		if(response.ok){
+			console.log('User registered successfully:', data);
+			navigate('/login');
+		}
+		else{
+			setError(data.message || 'Signup failed');
+			navigate('/signup');
+		}
+		
 	}
 
 	return (
 		<>
-			<div className="flex items-center justify-center mt-10 w-full">
-				<form onSubmit={handleSubmit} className="bg-gray-100 p-4 rounded-lg shadow-md mt-10 w-full max-w-sm items-center ">
+			<div className="flex items-center justify-center w-full">
+				<form onSubmit={handleSubmit} className="bg-gray-100 p-4 rounded-lg shadow-md mt-5 w-full max-w-sm items-center ">
 					<h2 className="text-xl font-extrabold text-gray-900 text-center">E<span className="text-indigo-600">.</span></h2>
 					{error && <p className="text-sm text-red-600 text-center">{error}</p>}
 

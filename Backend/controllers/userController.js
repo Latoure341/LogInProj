@@ -3,8 +3,21 @@ const Users = require('../models/users.js');
 //User registration
 const registerUser = async (req, res)=> {
     try {
-        const user = await Users.create(req.body);
-        res.status(200).json(user);
+        const {userName, userEmail, UserPassword}= req.body;
+        //Validation
+        if (!userName || !userEmail || !UserPassword) {
+            return  res.status(400).json({message: "All fields are required"});
+        }
+        
+        const user = await Users.create({
+            userName,
+            userEmail,
+            userPassword
+        });
+        res.status(200).json({
+            message: "User registered successfully",
+            user: user._id
+        });
     }
     catch(error){
         res.status(500).json({message: error.message});

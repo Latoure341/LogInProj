@@ -4,7 +4,7 @@ const {registerUser, loginUser} = require('../controllers/userController.js');
 const router = express.Router();
 
 //User registration route
-router.post('/register', registerUser);
+router.post('/signup', registerUser);
 //User login route
 router.post('/login', loginUser);
 
