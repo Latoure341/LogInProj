@@ -22,11 +22,12 @@ function Signup(){
 			setError('Passwords do not match')
 			return
 		}
-		// TODO: perform signup request here
-		const response = await fetch("http://localhost:3000/api/auth/signup", {	
+		
+		// perform signup request to backend API (map frontend keys to backend model keys)
+		const response = await fetch("http://localhost:3000/api/users/signup", { 	
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json'},
-			body: JSON.stringify({ name: form.name, email: form.email, password: form.password})
+			body: JSON.stringify({ userName: form.name, userEmail: form.email, userPassword: form.password })
 		})
 		const data = await response.json();
 		if(response.ok){
@@ -35,7 +36,7 @@ function Signup(){
 		}
 		else{
 			setError(data.message || 'Signup failed');
-			navigate('/signup');
+			// Keep user on signup page so they can correct errors
 		}
 		
 	}

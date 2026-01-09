@@ -1,18 +1,23 @@
+const bcrypt = require('bcrypt');
 const Users = require('../models/users.js');
 
 //User registration
 const registerUser = async (req, res)=> {
     try {
-        const {userName, userEmail, UserPassword}= req.body;
+        // Accept client keys in common shapes and normalize to our model fields
+        const { userName, userEmail } = req.body;
+        const userPassword = req.body.userPassword || req.body.password || req.body.UserPassword;
         //Validation
-        if (!userName || !userEmail || !UserPassword) {
+        if (!userName || !userEmail || !userPassword) {
             return  res.status(400).json({message: "All fields are required"});
         }
-        
+        //Hashing a password before storing for security
+        const hashPass = await bcrypt.hash(userPassword, 10);
+        //Create user in DB
         const user = await Users.create({
             userName,
             userEmail,
-            userPassword
+            userPassword : hashPass
         });
         res.status(200).json({
             message: "User registered successfully",
@@ -33,10 +38,11 @@ const loginUser = async (req, res)=> {
 
         // Find user by email only, then compare password
         const user = await Users.findOne({ userEmail });
+        const isValid = await bcrypt.compare(userPassword, user.userPassword);
         if(!user){
             return res.status(404).json({message: "User not found"});
         }
-        if (user.userPassword !== userPassword) {
+        if (!isValid){
             return res.status(401).json({ message: "Invalid password" });
         }
 

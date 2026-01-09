@@ -8,6 +8,7 @@ import '../App.css'
 
 function Home(){
   const [mobileOpen, setMobileOpen] = useState(false)
+  const year = new Date().getFullYear()
 
   return (
         <>
@@ -74,8 +75,18 @@ function Home(){
                     </div>
         </main>
 
-        <footer className="bg-gray-200 p-4 mt-20 bottom-0 w-full">
-            <div>2026 Evolve. All Rights Reserved</div>
+        <footer className="bg-gray-50 border-t mt-16">
+          <div className="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="text-sm text-gray-600">© {year} Evolve. All rights reserved.</div>
+            <div className="flex items-center gap-6">
+              <nav className="flex gap-4 text-sm">
+                <Link to="/about" className="text-gray-600 hover:text-gray-900">About</Link>
+                <Link to="/privacy" className="text-gray-600 hover:text-gray-900">Privacy</Link>
+                <Link to="/contact" className="text-gray-600 hover:text-gray-900">Contact</Link>
+              </nav>
+              <div className="text-sm text-gray-500">Built with care · <a href="#" className="text-indigo-600 hover:text-black">Evolve</a></div>
+            </div>
+          </div>
         </footer>
     </>
     )

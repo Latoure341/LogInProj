@@ -29,14 +29,11 @@ const corsOptions = {
     
 } 
 
-
-
 //Middleware
-
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(express.static(path.join(dirname, '../frontend/dist')));
-app.use(cors(allowedOrigins));        //Enables CORS for all routes and origins
+app.use(cors(corsOptions));        //Enables CORS for specified origins
 
 //Routes
 // Mount API routes under a clear API namespace
