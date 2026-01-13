@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const Users = require('../models/users.js');
 
 //User registration
@@ -38,15 +39,25 @@ const loginUser = async (req, res)=> {
 
         // Find user by email only, then compare password
         const user = await Users.findOne({ userEmail });
-        const isValid = await bcrypt.compare(userPassword, user.userPassword);
         if(!user){
             return res.status(404).json({message: "User not found"});
         }
+
+        const isValid = await bcrypt.compare(userPassword, user.userPassword);
         if (!isValid){
             return res.status(401).json({ message: "Invalid password" });
         }
 
-        return res.status(200).json({ message: "Login successful", user });
+        // Generate JWT (use environment variable JWT_SECRET)
+        const payload = { id: user._id, email: user.userEmail };
+        const secret = process.env.JWT_SECRET || 'change_this_secret';
+        const token = jwt.sign(payload, secret, { expiresIn: '1h' });
+
+        // Avoid returning password hash
+        const userSafe = user.toObject ? user.toObject() : { ...user };
+        delete userSafe.userPassword;
+
+        return res.status(200).json({ message: "Login successful", token, user: userSafe });
     }
     catch(error){
         res.status(500).json({message: error.message});
