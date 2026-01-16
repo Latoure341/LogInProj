@@ -1,52 +1,12 @@
-//Secrets Management
-const dotenv = require('dotenv');
-dotenv.config();
+//Entry point for the backend server
+require('dotenv').config();
 
-const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
-const userRoute = require('./routes/userRoute.js');
-
-const app = express();
-const port = process.env.PORT || 3000;
-
-const path = require('path');
-// Use __dirname so paths are correct regardless of current working directory
-const dirname = __dirname;
-
-//CORS Configuration
-const allowedOrigins = ['http://localhost:5173'];
-
-const corsOptions = {
-    origin: function (origin, callback) {
-        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ['POST', 'GET', 'PUT', 'DELETE'],
-    credentials: true       //Allow cookies/auth headers with requests
-
-}
-
-//Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(dirname, '../frontend/dist')));
-app.use(cors(corsOptions));        //Enables CORS for specified origins
-
-//Routes
-// Mount API routes under a clear API namespace
-app.use('/api/users', userRoute);
-
-// Serve frontend index
-app.get('/', (req, res) => {
-    res.status(200).sendFile(path.join(dirname, '../frontend/dist/index.html'));
-})
+const port = process.env.PORT;
+const mongoUri = process.env.MONGO_URI;
+const app = require('./App.js');
 
 // Validate MONGO_URI and attempt DB connection if provided.
-const mongoUri = process.env.MONGO_URI;
 mongoose.connect(mongoUri, {
 })
     .then(() => {

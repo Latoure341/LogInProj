@@ -1,11 +1,13 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const {registerUser, loginUser} = require('../controllers/userController.js');
+const requireAuth = require('../middleware/auth.js');
+const {register, login, userProfile} = require('../controllers/userController.js');
 const router = express.Router();
 
 //User registration route
-router.post('/signup', registerUser);
+router.post('/signup', register);
 //User login route
-router.post('/login', loginUser);
+router.post('/login', requireAuth, login);
+//get current user profile
+router.get('/me', requireAuth, userProfile);
 
 module.exports = router;

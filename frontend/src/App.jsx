@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import { Routes, Route, Link } from "react-router-dom";
 import About from "./components/about.jsx";
 import Login from "./components/login.jsx";
@@ -7,14 +5,10 @@ import Signup from "./components/signup.jsx";
 import Dashboard from "./components/dashboard.jsx";
 import Home from "./components/home.jsx";
 
-import assets from "./assets/femaleOutfit.jpg";
-import streetwear from "./assets/streetwear.jpg";
-import formal from "./assets/formal.jpg";
 import "./App.css";
 
 function App() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-
+  
   return (
     <header>
       <Routes>

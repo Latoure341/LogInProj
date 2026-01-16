@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import api from "../lib/api.js"; 
 
 function Login(){
     const navigate = useNavigate()
@@ -15,26 +16,11 @@ function Login(){
         e.preventDefault()
         setError('')
         try {
-            if (!form.email || !form.password) {
-                setError('Please fill all fields')
-                return
-            }
-
-            const response = await fetch("http://localhost:3000/api/users/login", {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userEmail: form.email, userPassword: form.password })
-            })
-            const data = await response.json()
-
-            if (response.ok) {
-                console.log('Login successful:', data)
-                navigate('/dashboard')
-            } else {
-                setError(data.message || 'Login failed')
-            }
+            const res = await api.post("/auth/login", { email: form.email, password: form.password })
+            console.log("Login successful:", res.data)
+            navigate("/dashboard") // redirect after login
         } catch (err) {
-            setError(err.message || 'Network error')
+            setError(err.response?.data?.message || "Login failed")
         }
     }
     return(

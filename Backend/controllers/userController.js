@@ -1,9 +1,9 @@
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const Users = require('../models/users.js');
+const {loginUser} = require('../services/authService.js');
 
 //User registration
-const registerUser = async (req, res)=> {
+const register = async (req, res)=> {
     try {
         // Accept client keys in common shapes and normalize to our model fields
         const { userName, userEmail } = req.body;
@@ -30,7 +30,7 @@ const registerUser = async (req, res)=> {
     }
 }
 //User login
-const loginUser = async (req, res)=> {
+const login = async (req, res)=> {
     try {
         const { userEmail, userPassword } = req.body || {};
         if (!userEmail || !userPassword) {
@@ -48,22 +48,49 @@ const loginUser = async (req, res)=> {
             return res.status(401).json({ message: "Invalid password" });
         }
 
-        // Generate JWT (use environment variable JWT_SECRET)
-        const payload = { id: user._id, email: user.userEmail };
-        const secret = process.env.JWT_SECRET || 'change_this_secret';
-        const token = jwt.sign(payload, secret, { expiresIn: '1h' });
-
-        // Avoid returning password hash
-        const userSafe = user.toObject ? user.toObject() : { ...user };
-        delete userSafe.userPassword;
-
-        return res.status(200).json({ message: "Login successful", token, user: userSafe });
+        //authenticating and setting cookies
+        try {
+            const { accessToken, refreshToken } = await loginUser(req.body);
+            const cookieOptions = {
+              access: {
+                httpOnly: true,
+                sameSite: "strict",
+                secure: process.env.NODE_ENV === "production",
+                maxAge: 15 * 60 * 1000,
+              },
+              refresh: {
+                httpOnly: true,
+                sameSite: "strict",
+                secure: process.env.NODE_ENV === "production",
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+              },
+            };
+        
+            res
+              .cookie("accessToken", accessToken, cookieOptions.access)
+              .cookie("refreshToken", refreshToken, cookieOptions.refresh)
+              .json({ message: "Logged in" });
+          } catch (e) {
+            res.status(401).json({ message: 'Loggin failed!'});
+          }
+        
     }
     catch(error){
         res.status(500).json({message: error.message});
     }
 }
+
+//get profile
+const userProfile = async(req, res)=> {
+    try {
+        const user = await Users.findById(req.user._id).select('-userEmail -userName -userPassword');
+        res.status(200).json(user);
+    } catch (error){
+        res.status(500).json({message: error.message});
+    }
+}
 module.exports = {
-    registerUser,
-    loginUser
+    register,
+    loginUser,
+    userProfile
 }

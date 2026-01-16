@@ -1,14 +1,22 @@
-import react from "react";
+import { useEffect, useState } from "react";
+import api from "../lib/api.js";
 
-const user = "User";
+export default function Dashboard() {
+  const [user, setUser] = useState(null);
 
-function Dashboard() {
-  return (
-    <>
-      <div className="fex items-center justify-center mt-10 w-full">
-        <h1 className="text-3xl font-bold">Welcome {user}</h1>
-      </div>
-    </>
-  );
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await api.get("/users/me");
+        setUser(res.data);
+      } catch (err) {
+        console.error(err.response?.data?.message || err.message);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  if (!user) return <p>Loading...</p>;
+
+  return <h1>Welcome, User ID: {user.userId}</h1>;
 }
-export default Dashboard;
