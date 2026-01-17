@@ -1,6 +1,5 @@
 const bcrypt = require('bcrypt');
 const Users = require('../models/users.js');
-const {loginUser} = require('../services/authService.js');
 
 //User registration
 const register = async (req, res)=> {
@@ -47,32 +46,6 @@ const login = async (req, res)=> {
         if (!isValid){
             return res.status(401).json({ message: "Invalid password" });
         }
-
-        //authenticating and setting cookies
-        try {
-            const { accessToken, refreshToken } = await loginUser(req.body);
-            const cookieOptions = {
-              access: {
-                httpOnly: true,
-                sameSite: "strict",
-                secure: process.env.NODE_ENV === "production",
-                maxAge: 15 * 60 * 1000,
-              },
-              refresh: {
-                httpOnly: true,
-                sameSite: "strict",
-                secure: process.env.NODE_ENV === "production",
-                maxAge: 7 * 24 * 60 * 60 * 1000,
-              },
-            };
-        
-            res
-              .cookie("accessToken", accessToken, cookieOptions.access)
-              .cookie("refreshToken", refreshToken, cookieOptions.refresh)
-              .json({ message: "Logged in" });
-          } catch (e) {
-            res.status(401).json({ message: 'Loggin failed!'});
-          }
         
     }
     catch(error){
@@ -91,6 +64,6 @@ const userProfile = async(req, res)=> {
 }
 module.exports = {
     register,
-    loginUser,
+    login,
     userProfile
 }
