@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const Users = require('../models/users.js');
 
 //User registration
-const register = async (req, res)=> {
+const registerUser = async (req, res)=> {
     try {
         // Accept client keys in common shapes and normalize to our model fields
         const { userName, userEmail } = req.body;
@@ -29,41 +29,51 @@ const register = async (req, res)=> {
     }
 }
 //User login
-const login = async (req, res)=> {
+const loginUser = async (req, res)=> {
     try {
         const { userEmail, userPassword } = req.body || {};
         if (!userEmail || !userPassword) {
-            return res.status(400).json({ message: "Email and password are required" });
+          return res.status(400).json({ message: "Email and password are required" });
         }
 
         // Find user by email only, then compare password
         const user = await Users.findOne({ userEmail });
+        const isValid = await bcrypt.compare(userPassword, user.userPassword);
         if(!user){
             return res.status(404).json({message: "User not found"});
         }
-
-        const isValid = await bcrypt.compare(userPassword, user.userPassword);
         if (!isValid){
             return res.status(401).json({ message: "Invalid password" });
         }
-        
+
+        return res.status(200).json({ message: "Login successful", user });
     }
     catch(error){
         res.status(500).json({message: error.message});
     }
 }
 
-//get profile
-const userProfile = async(req, res)=> {
-    try {
-        const user = await Users.findById(req.user._id).select('-userEmail -userName -userPassword');
-        res.status(200).json(user);
-    } catch (error){
-        res.status(500).json({message: error.message});
+const getProfile = async()=>{
+  try {
+    const userId = req.user.id;
+
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
+
+    res.status(200).json({
+      success: true,
+      user
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
 }
+
 module.exports = {
-    register,
-    login,
-    userProfile
+    registerUser,
+    loginUser,
+    getProfile
 }
