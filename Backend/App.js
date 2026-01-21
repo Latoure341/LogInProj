@@ -2,6 +2,8 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
+//Import libraries and frameworks
+const expressAuth = require('@auth/express')
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -14,8 +16,8 @@ const userRoute = require('./routes/userRoute.js');
 
 const app = express();
 
-
 const path = require('path');
+const { default: GitHub } = require('@auth/express/providers/github');
 // Use __dirname so paths are correct regardless of current working directory
 //CORS Configuration
 app.use(cors({
@@ -30,6 +32,7 @@ app.use(cookiesParser());          //Parse cookies from incoming requests
 //Routes
 // Mount API routes under a clear API namespace
 app.use('/api/users', userRoute);
+app.use('./api/users', expressAuth.ExpressAuth({providers : [GitHub]}))
 
 // Validate MONGO_URI and attempt DB connection if provided.
 mongoose.connect(mongoUri, {

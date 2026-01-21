@@ -1,4 +1,10 @@
 const jwt = require("jsonwebtoken");
+const expressAuth = require('@auth/express')
+const github = require('@auth/express/providers/github')
+
+export const { handlers, auth } = NextAuth({
+  providers: [github],
+})
 
 module.exports = (req, res, next) => {
   const token = req.cookies.token;
