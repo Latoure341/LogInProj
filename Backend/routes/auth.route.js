@@ -1,5 +1,20 @@
+const express = require('express');
+const router = express.Router();
+const passport = require('passport')
 
-const {handlers} = require('../middleware/auth.js')
+// 🔐 Start GitHub OAuth
+router.get(
+  "/github",
+  passport.authenticate("github", { scope: ["user:email"] })
+);
 
-export const { GET, POST } = handlers
-export const runtime = "edge" // optional
+// 🔁 GitHub callback
+router.get(
+  "/github/callback",
+  passport.authenticate("github", {
+    failureRedirect: "/login",
+    successRedirect: "http://localhost:5137/dashboard",
+  })
+);
+
+export default router;

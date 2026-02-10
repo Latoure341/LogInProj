@@ -1,9 +1,13 @@
 //Secrets Management
 const dotenv = require('dotenv');
 dotenv.config();
+//
+//const session = require('express-session');
+//const passport = require('passport');
+//const pass = require('./config/pass.js');
 
 //Import libraries and frameworks
-const expressAuth = require('@auth/express')
+//const expressAuth = require('@auth/express')
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -13,6 +17,7 @@ const cookiesParser = require('cookie-parser');
 
 //routes
 const userRoute = require('./routes/userRoute.js');
+//const authRoute = require('./routes/auth.route.js')
 
 const app = express();
 
@@ -32,7 +37,17 @@ app.use(cookiesParser());          //Parse cookies from incoming requests
 //Routes
 // Mount API routes under a clear API namespace
 app.use('/api/users', userRoute);
-app.use('./api/users', expressAuth.ExpressAuth({providers : [GitHub]}))
+//app.use('/api/auth', authRoute);
+//app.use('./api/auth', expressAuth.ExpressAuth({providers : [GitHub]}))
+//app.use(
+//  session({
+//    secret: process.env.SESSION_SECRET,
+//    resave: false,
+//    saveUninitialized: false,
+//  })
+//);
+//app.use(passport.initialize());
+//app.use(passport.session());
 
 // Validate MONGO_URI and attempt DB connection if provided.
 mongoose.connect(mongoUri, {
