@@ -37,7 +37,6 @@ app.use(cookiesParser());          //Parse cookies from incoming requests
 //Routes
 // Mount API routes under a clear API namespace
 app.use('/api/users', userRoute);
-<<<<<<< Updated upstream
 //app.use('/api/auth', authRoute);
 //app.use('./api/auth', expressAuth.ExpressAuth({providers : [GitHub]}))
 //app.use(
@@ -49,9 +48,6 @@ app.use('/api/users', userRoute);
 //);
 //app.use(passport.initialize());
 //app.use(passport.session());
-=======
-// app.use('./api/users', expressAuth.ExpressAuth({providers : [GitHub]}))
->>>>>>> Stashed changes
 
 // Validate MONGO_URI and attempt DB connection if provided.
 mongoose.connect(mongoUri, {
