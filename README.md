@@ -1,28 +1,46 @@
-#Full-Stack Authentication & Dashboard Application
-===================================================
+# Full-Stack Authentication & Dashboard Application
 
-A full-stack web app showcasing a real-world user flow from landing page to authenticated dashboard.
-Includes secure sign-up and sign-in with backend validation and database persistence.
-Features protected routes, RESTful APIs, and token- or session-based authentication.
-Built with modern frontend tools and a structured backend architecture.
-Deployed and designed to reflect practical production patterns, not a demo project.
+A full-stack web app with React/Vite frontend and Express/MongoDB backend.
+The project includes user registration, login, a landing page, About page, and a dashboard UI.
+Authentication is implemented on the server with password hashing via bcrypt.
 
-## Project Status & Notes
+## Project Overview
 
-- Backend: Express + Mongoose (MongoDB). Running on `http://localhost:3000` by default.
-- Frontend: Vite + React + Tailwind CSS. Runs on `http://localhost:5173` in dev.
+- Frontend: React + Vite + Tailwind CSS
+- Backend: Express + Mongoose + MongoDB
+- Auth: bcrypt password hashing, login endpoint, and protected dashboard UI pattern
+- Dev ports: frontend on `http://localhost:5173`, backend on `http://localhost:5000`
 
-Recent fixes applied:
-- Fixed field-name mismatch in `Backend/controllers/userController.js` (normalized incoming password keys).
-- Corrected CORS middleware usage in `Backend/server.js` to use the configured `corsOptions`.
-- Updated `frontend/src/components/signup.jsx` to POST to `/api/users/signup` and send `{ userName, userEmail, userPassword }`.
-- Fixed `frontend/src/components/login.jsx` to correctly manage form state, validation, and submit to `/api/users/login`.
-- Enhanced `frontend/src/components/home.jsx` footer and added a full `frontend/src/components/about.jsx` page.
-- Implemented password hashing with bcrypt (10 salt rounds) in signup and bcrypt.compare in login.
+## Workspace Structure
 
-## Quickstart (development)
+- `Backend/`
+  - `App.js` — Express server and MongoDB connection
+  - `routes/userRoute.js` — `/api/users` routes
+  - `controllers/userController.js` — registration and login handlers
+  - `models/users.js` — user schema and model
+- `frontend/`
+  - `src/App.jsx` — route definitions for `/`, `/login`, `/signup`, `/about`, `/dashboard`
+  - `src/components/` — UI pages and dashboard components
+  - `src/lib/api.js` — API helper library
 
-1. Start the backend
+## Backend Features
+
+- POST `/api/users/register` — register a new user
+- POST `/api/users/login` — authenticate an existing user
+- GET `/api/users/me` — profile endpoint scaffolded in routes
+- Password hashing with `bcrypt` before storing users
+- CORS configured for `http://localhost:5173`
+
+## Frontend Features
+
+- Home page with navigation to About, Login, and Signup
+- Signup form with client-side validation and password confirmation
+- Login form with error handling and redirect to dashboard
+- Dashboard layout with sidebar, stats, orders, wishlist, and recommendations
+
+## Setup & Run
+
+1. Backend
 
 ```bash
 cd Backend
@@ -30,7 +48,7 @@ npm install
 npm run dev
 ```
 
-2. Start the frontend
+2. Frontend
 
 ```bash
 cd frontend
@@ -38,39 +56,40 @@ npm install
 npm run dev
 ```
 
-3. Test endpoints
+3. Open in browser
 
-Signup (example):
+- Frontend: `http://localhost:5173`
+- Backend API: `http://localhost:5000`
+
+## Example API Requests
+
+Signup:
+
 ```bash
-curl -X POST http://localhost:3000/api/users/signup \
-	-H "Content-Type: application/json" \
-	-d '{"userName":"Alice","userEmail":"alice@example.com","userPassword":"secret"}'
+curl -X POST http://localhost:5000/api/users/register \
+  -H "Content-Type: application/json" \
+  -d '{"userName":"Alice","userEmail":"alice@example.com","userPassword":"secret"}'
 ```
 
-Login (example):
+Login:
+
 ```bash
-curl -X POST http://localhost:3000/api/users/login \
-	-H "Content-Type: application/json" \
-	-d '{"userEmail":"alice@example.com","userPassword":"secret"}'
+curl -X POST http://localhost:5000/api/users/login \
+  -H "Content-Type: application/json" \
+  -d '{"userEmail":"alice@example.com","userPassword":"secret"}'
 ```
 
-## API Endpoints
+## Notes
 
-- POST `/api/users/signup` — register new user. Body: `{ userName, userEmail, userPassword }`.
-- POST `/api/users/login` — login. Body: `{ userEmail, userPassword }`.
+- The backend uses `PORT=5000` from `Backend/.env` or `Backend/.env.example`.
+- The frontend currently posts to `http://localhost:5000/api/users/register` and `http://localhost:5000/api/users/login`.
+- The dashboard route is client-side and does not yet enforce server-side authentication.
 
-## Security Features Implemented
+## Recommended Improvements
 
-- ✅ Password hashing with bcrypt (rounds: 10)
-- ✅ CORS enabled with allowlist (localhost:5173)
-- ✅ Input validation on signup/login endpoints
-
-## Next recommended improvements
-
-- Add proper authentication tokens (JWT) or session handling.
-- Improve validation and error messages on both client and server.
-- Add tests and CI for endpoints.
-- Protected dashboard route (only accessible after login)
-- Email verification before account activation
-- Password reset flow
+- Add JWT or session-based auth for protected API access
+- Implement backend route protection for `/api/users/me`
+- Add unit and integration tests for API endpoints
+- Improve error messaging and validation feedback
+- Add password reset and email verification flows
 
