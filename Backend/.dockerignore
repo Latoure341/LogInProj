@@ -9,8 +9,7 @@ yarn.lock
 pnpm-lock.yaml
 
 # Ignore environment and secret files
-.env
-.env.*
+
 
 # Editor directories and system files
 .DS_Store
