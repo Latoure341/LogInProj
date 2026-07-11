@@ -1,5 +1,12 @@
-
 services:
+  db:
+    image: mongo:6
+    restart: always
+    volumes:
+      - shared-data:/data/db
+    networks:
+      - login-app
+
   backend:
     build:
       context: ./Backend
@@ -8,19 +15,34 @@ services:
     volumes:
       - ./Backend:/app
       - /app/node_nodules
+    networks:
+      - login-app
     ports:
       - "5000:5000"
-    environment:
-    - PORT=5000
-    - 'mongodb+srv://tukamothupi_db_user:2FStjH8gT1rDX0WW@thedeveloper.bkgwozo.mongodb.net/?appName=TheDeveloper'
+    env_file:
+      - ./Backend/.env
     depends_on:
       - db
 
-  db:
-    image: mongo:6
-    restart: always
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
     volumes:
-      - shared-data:/data/db
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - login-app
+    ports:
+      - "5173:5173"
+    command: npm run dev -- --host
+    depends_on:
+      - backend
+
 
 volumes:
   shared-data: {}
+networks:
+  login-app:
+    driver: bridge
